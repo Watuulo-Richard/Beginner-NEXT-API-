@@ -2,13 +2,14 @@
 import { useForm } from "react-hook-form"
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Loader2 } from "lucide-react"
+import { Loader} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ProductType } from "@/types/types"
+import toast from "react-hot-toast"
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
 export default function ProductForm() {
@@ -25,12 +26,20 @@ export default function ProductForm() {
   async function onSubmit(data:ProductType){
     data.price = Number(data.price)
     
-    const response =   await fetch(`${baseUrl}/api/v1/products`,{
-        method:"POST",
-        headers: {"Content-Type":"application/json"},
-        body : JSON.stringify(data)
-    })
-    console.log(response)
+    try {
+        setIsLoading(true)
+        await fetch(`${baseUrl}/api/v1/products`,{
+            method:"POST",
+            headers: {"Content-Type":"application/json"},
+            body : JSON.stringify(data)
+        })
+        toast.success("product created successfully")
+        setIsLoading(false)
+    } catch (error) {
+        console.log(error)
+        toast.error("failed to create product")
+        setIsLoading(false)
+    }
   }
 
   return (
@@ -82,7 +91,7 @@ export default function ProductForm() {
             <Button className="w-full" type="submit" disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
                   Adding Product...
                 </>
               ) : (
