@@ -19,7 +19,7 @@ export default function ProductForm() {
   const {
     register,
     handleSubmit,
-    // watch,
+    reset,
     formState: { errors },
   } = useForm<ProductType>()
 
@@ -35,6 +35,7 @@ export default function ProductForm() {
         })
         toast.success("product created successfully")
         setIsLoading(false)
+        reset()
     } catch (error) {
         console.log(error)
         toast.error("failed to create product")
